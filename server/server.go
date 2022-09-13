@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/Erickype/GoBonsaiAlbum/mysql"
 	"github.com/Erickype/GoBonsaiAlbum/redis"
 )
 
@@ -16,4 +17,10 @@ func main() {
 	} else {
 		fmt.Println(result)
 	}
+
+	db, err := mysql.GetMysqlConnection()
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(db.Ping())
 }
