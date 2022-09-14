@@ -6,6 +6,10 @@ and talk to others passionate for bonsai.
 
 ## Features
 - Use of redis and Mysql
+- Use of gRPC
 - Login auth using jwt
 - Scroll page
 - Groups and messaging
+
+## Already features added
+- Integration of redis and mysql
