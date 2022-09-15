@@ -3,8 +3,9 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/Erickype/GoBonsaiAlbum/mysql"
+	pbUsers "github.com/Erickype/GoBonsaiAlbum/gRPC/users"
 	"github.com/Erickype/GoBonsaiAlbum/redis"
+	"net"
 )
 
 func main() {
@@ -18,9 +19,16 @@ func main() {
 		fmt.Println(result)
 	}
 
-	db, err := mysql.GetMysqlConnection()
+	listen, err := net.Listen("tcp", ":50051")
 	if err != nil {
-		panic(err)
+		panic("Cannot create tcp connection: " + err.Error())
 	}
-	fmt.Println(db.Ping())
+
+	serv := pbUsers.ImplementServer()
+
+	err = serv.Serve(listen)
+
+	if err != nil {
+		panic("Cannot initialize server: " + err.Error())
+	}
 }
