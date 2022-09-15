@@ -12,7 +12,7 @@ const (
 	port     = 3306
 	username = "root"
 	password = "Erickype"
-	dbname   = "test"
+	dbname   = "users"
 )
 
 func GetMysqlConnection() (*sql.DB, error) {
