@@ -14,10 +14,9 @@ func main() {
 
 	result, err := redis.PingRedisClient(redisClient, ctx)
 	if err != nil {
-		fmt.Println(err)
-	} else {
-		fmt.Println(result)
+		panic(err)
 	}
+	fmt.Println(result)
 
 	listen, err := net.Listen("tcp", ":50051")
 	if err != nil {
