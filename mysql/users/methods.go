@@ -2,12 +2,12 @@ package users
 
 import (
 	"database/sql"
-	"github.com/Erickype/GoBonsaiAlbum/gRPC/models"
+	"github.com/Erickype/GoBonsaiAlbum/models"
 	"github.com/Erickype/GoBonsaiAlbum/mysql"
 	"time"
 )
 
-func CreateUser(user *models.User) {
+func CreateUser(user *models.User) (int64, error) {
 	db, err := mysql.GetMysqlConnection()
 	if err != nil {
 		panic(err)
@@ -26,10 +26,12 @@ func CreateUser(user *models.User) {
 	}(stmtIns)
 
 	date := time.Now().Format(time.RFC3339)
-	_, err = stmtIns.Exec(user.UserName, user.UserLastname, user.UserNickname, date)
+	result, err := stmtIns.Exec(user.UserName, user.UserLastname, user.UserNickname, date)
 
 	err = db.Close()
 	if err != nil {
 		panic(err)
 	}
+
+	return result.LastInsertId()
 }
