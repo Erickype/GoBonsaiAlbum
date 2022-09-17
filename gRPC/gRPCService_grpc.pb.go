@@ -2,9 +2,9 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             v3.21.5
-// source: gRPC/users/users.proto
+// source: gRPC/gRPCService.proto
 
-package users
+package gRPC
 
 import (
 	context "context"
@@ -36,7 +36,7 @@ func NewUsersClient(cc grpc.ClientConnInterface) UsersClient {
 
 func (c *usersClient) CreateUser(ctx context.Context, in *CreateUserReq, opts ...grpc.CallOption) (*CreateUserRes, error) {
 	out := new(CreateUserRes)
-	err := c.cc.Invoke(ctx, "/users.Users/CreateUser", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/gRPC.Users/CreateUser", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -82,7 +82,7 @@ func _Users_CreateUser_Handler(srv interface{}, ctx context.Context, dec func(in
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/users.Users/CreateUser",
+		FullMethod: "/gRPC.Users/CreateUser",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UsersServer).CreateUser(ctx, req.(*CreateUserReq))
@@ -94,7 +94,7 @@ func _Users_CreateUser_Handler(srv interface{}, ctx context.Context, dec func(in
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var Users_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "users.Users",
+	ServiceName: "gRPC.Users",
 	HandlerType: (*UsersServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -103,5 +103,5 @@ var Users_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "gRPC/users/users.proto",
+	Metadata: "gRPC/gRPCService.proto",
 }

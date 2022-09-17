@@ -1,7 +1,7 @@
 syntax = "proto3";
-package users;
+package gRPC;
 
-option go_package = "github.com/Erickype/GoBonsaiAlbum/gRPC/users";
+option go_package = "github.com/Erickype/GoBonsaiAlbum/gRPC";
 
 message User{
   int32 id = 1;
