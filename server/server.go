@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
-	pbUsers "github.com/Erickype/GoBonsaiAlbum/gRPC/users"
+	pbService "github.com/Erickype/GoBonsaiAlbum/gRPC"
 	"github.com/Erickype/GoBonsaiAlbum/redis"
 	"net"
 )
@@ -23,7 +23,7 @@ func main() {
 		panic("Cannot create tcp connection: " + err.Error())
 	}
 
-	serv := pbUsers.ImplementServer()
+	serv := pbService.ImplementServer()
 
 	err = serv.Serve(listen)
 

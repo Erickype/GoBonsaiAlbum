@@ -1,4 +1,4 @@
-package users
+package gRPC
 
 import (
 	"context"
@@ -10,7 +10,8 @@ import (
 )
 
 type server struct {
-	UnimplementedUsersServer
+	UnimplementedServiceGRPCServer
+	savedUser []*User
 }
 
 func (s *server) CreateUser(_ context.Context, req *CreateUserReq) (*CreateUserRes, error) {
@@ -34,12 +35,14 @@ func (s *server) CreateUser(_ context.Context, req *CreateUserReq) (*CreateUserR
 	}, err
 }
 
+func (s *server) GetUsers(req *GetUsersReq, stream ServiceGRPC_GetUsersServer) error {
+
+	return nil
+}
+
 func ImplementServer() *grpc.Server {
-
 	serv := grpc.NewServer()
-
 	//Server register
-	RegisterUsersServer(serv, &server{})
-
+	RegisterServiceGRPCServer(serv, &server{})
 	return serv
 }
