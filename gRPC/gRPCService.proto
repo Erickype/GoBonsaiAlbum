@@ -3,6 +3,7 @@ package gRPC;
 
 option go_package = "github.com/Erickype/GoBonsaiAlbum/gRPC";
 
+//Models
 message User{
   int32 id = 1;
   string userName = 2;
@@ -10,20 +11,28 @@ message User{
   string userNickname = 4;
 }
 
-//Req and res
+//Create user Req and res
 message CreateUserReq{
   string userName = 1;
   string userLastname = 2;
   string userNickname = 3;
 }
-
 message CreateUserRes{
   int32 id = 1;
 }
 
+//GetUsers req and res
+message GetUsersReq{
+  int32 id = 1;
+}
+message GetUsersRes{
+  User user = 1;
+}
+
 //service users
-service Users{
+service ServiceGRPC{
   //CreateUser
   rpc CreateUser(CreateUserReq) returns (CreateUserRes);
+  rpc GetUsers(GetUsersReq) returns (stream GetUsersRes);
 }
 

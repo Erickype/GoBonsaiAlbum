@@ -18,90 +18,154 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// UsersClient is the client API for Users service.
+// ServiceGRPCClient is the client API for ServiceGRPC service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type UsersClient interface {
+type ServiceGRPCClient interface {
 	// CreateUser
 	CreateUser(ctx context.Context, in *CreateUserReq, opts ...grpc.CallOption) (*CreateUserRes, error)
+	GetUsers(ctx context.Context, in *GetUsersReq, opts ...grpc.CallOption) (ServiceGRPC_GetUsersClient, error)
 }
 
-type usersClient struct {
+type serviceGRPCClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewUsersClient(cc grpc.ClientConnInterface) UsersClient {
-	return &usersClient{cc}
+func NewServiceGRPCClient(cc grpc.ClientConnInterface) ServiceGRPCClient {
+	return &serviceGRPCClient{cc}
 }
 
-func (c *usersClient) CreateUser(ctx context.Context, in *CreateUserReq, opts ...grpc.CallOption) (*CreateUserRes, error) {
+func (c *serviceGRPCClient) CreateUser(ctx context.Context, in *CreateUserReq, opts ...grpc.CallOption) (*CreateUserRes, error) {
 	out := new(CreateUserRes)
-	err := c.cc.Invoke(ctx, "/gRPC.Users/CreateUser", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/gRPC.ServiceGRPC/CreateUser", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// UsersServer is the server API for Users service.
-// All implementations must embed UnimplementedUsersServer
+func (c *serviceGRPCClient) GetUsers(ctx context.Context, in *GetUsersReq, opts ...grpc.CallOption) (ServiceGRPC_GetUsersClient, error) {
+	stream, err := c.cc.NewStream(ctx, &ServiceGRPC_ServiceDesc.Streams[0], "/gRPC.ServiceGRPC/GetUsers", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &serviceGRPCGetUsersClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type ServiceGRPC_GetUsersClient interface {
+	Recv() (*GetUsersRes, error)
+	grpc.ClientStream
+}
+
+type serviceGRPCGetUsersClient struct {
+	grpc.ClientStream
+}
+
+func (x *serviceGRPCGetUsersClient) Recv() (*GetUsersRes, error) {
+	m := new(GetUsersRes)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+// ServiceGRPCServer is the server API for ServiceGRPC service.
+// All implementations must embed UnimplementedServiceGRPCServer
 // for forward compatibility
-type UsersServer interface {
+type ServiceGRPCServer interface {
 	// CreateUser
 	CreateUser(context.Context, *CreateUserReq) (*CreateUserRes, error)
-	mustEmbedUnimplementedUsersServer()
+	GetUsers(*GetUsersReq, ServiceGRPC_GetUsersServer) error
+	mustEmbedUnimplementedServiceGRPCServer()
 }
 
-// UnimplementedUsersServer must be embedded to have forward compatible implementations.
-type UnimplementedUsersServer struct {
+// UnimplementedServiceGRPCServer must be embedded to have forward compatible implementations.
+type UnimplementedServiceGRPCServer struct {
 }
 
-func (UnimplementedUsersServer) CreateUser(context.Context, *CreateUserReq) (*CreateUserRes, error) {
+func (UnimplementedServiceGRPCServer) CreateUser(context.Context, *CreateUserReq) (*CreateUserRes, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateUser not implemented")
 }
-func (UnimplementedUsersServer) mustEmbedUnimplementedUsersServer() {}
+func (UnimplementedServiceGRPCServer) GetUsers(*GetUsersReq, ServiceGRPC_GetUsersServer) error {
+	return status.Errorf(codes.Unimplemented, "method GetUsers not implemented")
+}
+func (UnimplementedServiceGRPCServer) mustEmbedUnimplementedServiceGRPCServer() {}
 
-// UnsafeUsersServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to UsersServer will
+// UnsafeServiceGRPCServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to ServiceGRPCServer will
 // result in compilation errors.
-type UnsafeUsersServer interface {
-	mustEmbedUnimplementedUsersServer()
+type UnsafeServiceGRPCServer interface {
+	mustEmbedUnimplementedServiceGRPCServer()
 }
 
-func RegisterUsersServer(s grpc.ServiceRegistrar, srv UsersServer) {
-	s.RegisterService(&Users_ServiceDesc, srv)
+func RegisterServiceGRPCServer(s grpc.ServiceRegistrar, srv ServiceGRPCServer) {
+	s.RegisterService(&ServiceGRPC_ServiceDesc, srv)
 }
 
-func _Users_CreateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ServiceGRPC_CreateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateUserReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UsersServer).CreateUser(ctx, in)
+		return srv.(ServiceGRPCServer).CreateUser(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/gRPC.Users/CreateUser",
+		FullMethod: "/gRPC.ServiceGRPC/CreateUser",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UsersServer).CreateUser(ctx, req.(*CreateUserReq))
+		return srv.(ServiceGRPCServer).CreateUser(ctx, req.(*CreateUserReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// Users_ServiceDesc is the grpc.ServiceDesc for Users service.
+func _ServiceGRPC_GetUsers_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(GetUsersReq)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(ServiceGRPCServer).GetUsers(m, &serviceGRPCGetUsersServer{stream})
+}
+
+type ServiceGRPC_GetUsersServer interface {
+	Send(*GetUsersRes) error
+	grpc.ServerStream
+}
+
+type serviceGRPCGetUsersServer struct {
+	grpc.ServerStream
+}
+
+func (x *serviceGRPCGetUsersServer) Send(m *GetUsersRes) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+// ServiceGRPC_ServiceDesc is the grpc.ServiceDesc for ServiceGRPC service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var Users_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "gRPC.Users",
-	HandlerType: (*UsersServer)(nil),
+var ServiceGRPC_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "gRPC.ServiceGRPC",
+	HandlerType: (*ServiceGRPCServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "CreateUser",
-			Handler:    _Users_CreateUser_Handler,
+			Handler:    _ServiceGRPC_CreateUser_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "GetUsers",
+			Handler:       _ServiceGRPC_GetUsers_Handler,
+			ServerStreams: true,
+		},
+	},
 	Metadata: "gRPC/gRPCService.proto",
 }
