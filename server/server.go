@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
-	pbUsers "github.com/Erickype/GoBonsaiAlbum/gRPC/users"
+	pbService "github.com/Erickype/GoBonsaiAlbum/gRPC"
 	"github.com/Erickype/GoBonsaiAlbum/redis"
 	"net"
 )
@@ -14,17 +14,16 @@ func main() {
 
 	result, err := redis.PingRedisClient(redisClient, ctx)
 	if err != nil {
-		fmt.Println(err)
-	} else {
-		fmt.Println(result)
+		panic(err)
 	}
+	fmt.Println(result)
 
 	listen, err := net.Listen("tcp", ":50051")
 	if err != nil {
 		panic("Cannot create tcp connection: " + err.Error())
 	}
 
-	serv := pbUsers.ImplementServer()
+	serv := pbService.ImplementServer()
 
 	err = serv.Serve(listen)
 

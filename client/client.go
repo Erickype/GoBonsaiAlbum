@@ -3,26 +3,54 @@ package main
 import (
 	"context"
 	"fmt"
-	pbUsers "github.com/Erickype/GoBonsaiAlbum/gRPC/users"
+	pbService "github.com/Erickype/GoBonsaiAlbum/gRPC"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
+	"io"
+	"log"
 )
 
 func main() {
-	conn, err := grpc.Dial("localhost:50051", grpc.WithInsecure())
+	conn, err := grpc.Dial("localhost:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
 
 	if err != nil {
 		panic("Connection error:  " + err.Error())
 	}
 
-	clientService := pbUsers.NewUsersClient(conn)
+	clientService := pbService.NewServiceGRPCClient(conn)
 
-	res, err := clientService.CreateUser(context.Background(), &pbUsers.CreateUserReq{
+	//CreateUser(clientService)
+	GetUsers(clientService)
+}
+
+func CreateUser(clientService pbService.ServiceGRPCClient) {
+	res, err := clientService.CreateUser(context.Background(), &pbService.CreateUserReq{
 		UserName:     "Erick",
-		UserLastname: "Carrasco",
+		UserLastname: "Carreras",
 		UserNickname: "Erickype",
 	})
 	if err != nil {
 		panic(err)
 	}
 	fmt.Println(res)
+}
+
+func GetUsers(clientService pbService.ServiceGRPCClient) {
+	stream, err := clientService.GetUsers(context.Background(), &pbService.GetUsersReq{Id: 0})
+	if err != nil {
+		log.Fatalf("clientService.GetUsers failed: %v", err)
+	}
+	for {
+		res, err := stream.Recv()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			log.Fatalf("clientService.GetUsers failed: %v", err)
+		}
+		user := res.User
+
+		log.Printf("User: %v, Name: %v, Lastname:%v, Nickname:%v", user.Id,
+			user.UserName, user.UserLastname, user.UserNickname)
+	}
 }
