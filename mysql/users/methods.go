@@ -84,3 +84,36 @@ func GetUsers() []*models.User {
 
 	return users
 }
+
+func UpdateUser(user *models.User) (int64, error) {
+
+	db, err := mysql.GetMysqlConnection()
+	if err != nil {
+		panic(err)
+	}
+
+	q := `UPDATE users.user 
+		  SET userName = ?, userLastname = ?, userNickname = ? 
+		  WHERE id = ?`
+	stmUpd, err := db.Prepare(q)
+	if err != nil {
+		panic(err.Error())
+	}
+	defer func(stmtIns *sql.Stmt) {
+		err := stmtIns.Close()
+		if err != nil {
+			panic(err)
+		}
+	}(stmUpd)
+
+	result, err := stmUpd.Exec(user.UserName, user.UserLastname, user.UserNickname, user.Id)
+
+	err = db.Close()
+	if err != nil {
+		panic(err)
+	}
+
+	rows, err := result.RowsAffected()
+
+	return rows, err
+}
