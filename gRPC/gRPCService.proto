@@ -29,10 +29,20 @@ message GetUsersRes{
   User user = 1;
 }
 
+//UpdateUser req and res
+message UpdateUserReq{
+  User user = 1;
+}
+
+message  UpdateUserRes{
+  bool updated = 1;
+  string error = 2;
+}
+
 //service users
 service ServiceGRPC{
   //CreateUser
   rpc CreateUser(CreateUserReq) returns (CreateUserRes);
   rpc GetUsers(GetUsersReq) returns (stream GetUsersRes);
+  rpc UpdateUser(UpdateUserReq) returns (UpdateUserRes);
 }
-
