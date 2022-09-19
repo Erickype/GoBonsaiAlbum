@@ -16,7 +16,7 @@ const (
 )
 
 func GetMysqlConnection() (*sql.DB, error) {
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", username, password, host, port, dbname)
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?parseTime=true", username, password, host, port, dbname)
 
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
