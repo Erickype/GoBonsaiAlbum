@@ -39,10 +39,20 @@ message  UpdateUserRes{
   string error = 2;
 }
 
+//DeleteUser
+message DeleteUserReq{
+  int32 id = 1;
+}
+message DeleteUserRes{
+  bool deleted = 1;
+  string error = 2;
+}
+
 //service users
 service ServiceGRPC{
   //CreateUser
   rpc CreateUser(CreateUserReq) returns (CreateUserRes);
   rpc GetUsers(GetUsersReq) returns (stream GetUsersRes);
   rpc UpdateUser(UpdateUserReq) returns (UpdateUserRes);
+  rpc DeleteUser(DeleteUserReq) returns (DeleteUserRes);
 }
