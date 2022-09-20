@@ -22,6 +22,7 @@ func main() {
 	//CreateUser(clientService)
 	GetUsers(clientService)
 	UpdateUser(clientService)
+	DeleteUser(clientService)
 }
 
 func CreateUser(clientService pbService.ServiceGRPCClient) {
@@ -59,10 +60,10 @@ func GetUsers(clientService pbService.ServiceGRPCClient) {
 func UpdateUser(clientService pbService.ServiceGRPCClient) {
 
 	user := pbService.User{
-		Id:           11,
-		UserName:     "Joss",
-		UserLastname: "San",
-		UserNickname: "Joa",
+		Id:           1,
+		UserName:     "Pam",
+		UserLastname: "Jos",
+		UserNickname: "Posh",
 	}
 
 	res, err := clientService.UpdateUser(context.Background(), &pbService.UpdateUserReq{
@@ -72,4 +73,14 @@ func UpdateUser(clientService pbService.ServiceGRPCClient) {
 		panic(err)
 	}
 	fmt.Printf("Updated: %v, Error: %v", res.Updated, res.Error)
+}
+func DeleteUser(clientService pbService.ServiceGRPCClient) {
+
+	res, err := clientService.DeleteUser(context.Background(), &pbService.DeleteUserReq{
+		Id: 11,
+	})
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("\nDeleted: %v, Error: %v", res.Deleted, res.Error)
 }
