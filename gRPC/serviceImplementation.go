@@ -85,6 +85,27 @@ func (s *server) UpdateUser(_ context.Context, req *UpdateUserReq) (*UpdateUserR
 	return updateUserRes, nil
 }
 
+func (s *server) DeleteUser(_ context.Context, req *DeleteUserReq) (*DeleteUserRes, error) {
+
+	deleteUserRes := &DeleteUserRes{
+		state:         protoimpl.MessageState{},
+		sizeCache:     0,
+		unknownFields: nil,
+		Deleted:       false,
+		Error:         "",
+	}
+
+	result, err := mysql.DeleteUser(req.Id)
+	if err != nil {
+		deleteUserRes.Error = err.Error()
+		return deleteUserRes, err
+	}
+
+	deleteUserRes.Deleted = result != 0
+
+	return deleteUserRes, nil
+}
+
 func (s *server) LoadSavedUsers(users []*models.User) {
 	for _, user := range users {
 		var savedUser = User{

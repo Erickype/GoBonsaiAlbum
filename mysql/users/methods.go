@@ -117,3 +117,34 @@ func UpdateUser(user *models.User) (int64, error) {
 
 	return rows, err
 }
+
+func DeleteUser(id int32) (int64, error) {
+	db, err := mysql.GetMysqlConnection()
+	if err != nil {
+		panic(err)
+	}
+
+	q := `DELETE FROM users.user 
+		  WHERE id = ?`
+	stmDel, err := db.Prepare(q)
+	if err != nil {
+		panic(err.Error())
+	}
+	defer func(stmDel *sql.Stmt) {
+		err := stmDel.Close()
+		if err != nil {
+			panic(err)
+		}
+	}(stmDel)
+
+	result, err := stmDel.Exec(id)
+
+	err = db.Close()
+	if err != nil {
+		panic(err)
+	}
+
+	rows, err := result.RowsAffected()
+
+	return rows, err
+}
