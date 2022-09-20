@@ -25,6 +25,8 @@ type ServiceGRPCClient interface {
 	// CreateUser
 	CreateUser(ctx context.Context, in *CreateUserReq, opts ...grpc.CallOption) (*CreateUserRes, error)
 	GetUsers(ctx context.Context, in *GetUsersReq, opts ...grpc.CallOption) (ServiceGRPC_GetUsersClient, error)
+	UpdateUser(ctx context.Context, in *UpdateUserReq, opts ...grpc.CallOption) (*UpdateUserRes, error)
+	DeleteUser(ctx context.Context, in *DeleteUserReq, opts ...grpc.CallOption) (*DeleteUserRes, error)
 }
 
 type serviceGRPCClient struct {
@@ -76,6 +78,24 @@ func (x *serviceGRPCGetUsersClient) Recv() (*GetUsersRes, error) {
 	return m, nil
 }
 
+func (c *serviceGRPCClient) UpdateUser(ctx context.Context, in *UpdateUserReq, opts ...grpc.CallOption) (*UpdateUserRes, error) {
+	out := new(UpdateUserRes)
+	err := c.cc.Invoke(ctx, "/gRPC.ServiceGRPC/UpdateUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *serviceGRPCClient) DeleteUser(ctx context.Context, in *DeleteUserReq, opts ...grpc.CallOption) (*DeleteUserRes, error) {
+	out := new(DeleteUserRes)
+	err := c.cc.Invoke(ctx, "/gRPC.ServiceGRPC/DeleteUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ServiceGRPCServer is the server API for ServiceGRPC service.
 // All implementations must embed UnimplementedServiceGRPCServer
 // for forward compatibility
@@ -83,6 +103,8 @@ type ServiceGRPCServer interface {
 	// CreateUser
 	CreateUser(context.Context, *CreateUserReq) (*CreateUserRes, error)
 	GetUsers(*GetUsersReq, ServiceGRPC_GetUsersServer) error
+	UpdateUser(context.Context, *UpdateUserReq) (*UpdateUserRes, error)
+	DeleteUser(context.Context, *DeleteUserReq) (*DeleteUserRes, error)
 	mustEmbedUnimplementedServiceGRPCServer()
 }
 
@@ -95,6 +117,12 @@ func (UnimplementedServiceGRPCServer) CreateUser(context.Context, *CreateUserReq
 }
 func (UnimplementedServiceGRPCServer) GetUsers(*GetUsersReq, ServiceGRPC_GetUsersServer) error {
 	return status.Errorf(codes.Unimplemented, "method GetUsers not implemented")
+}
+func (UnimplementedServiceGRPCServer) UpdateUser(context.Context, *UpdateUserReq) (*UpdateUserRes, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateUser not implemented")
+}
+func (UnimplementedServiceGRPCServer) DeleteUser(context.Context, *DeleteUserReq) (*DeleteUserRes, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteUser not implemented")
 }
 func (UnimplementedServiceGRPCServer) mustEmbedUnimplementedServiceGRPCServer() {}
 
@@ -148,6 +176,42 @@ func (x *serviceGRPCGetUsersServer) Send(m *GetUsersRes) error {
 	return x.ServerStream.SendMsg(m)
 }
 
+func _ServiceGRPC_UpdateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateUserReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ServiceGRPCServer).UpdateUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/gRPC.ServiceGRPC/UpdateUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ServiceGRPCServer).UpdateUser(ctx, req.(*UpdateUserReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ServiceGRPC_DeleteUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteUserReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ServiceGRPCServer).DeleteUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/gRPC.ServiceGRPC/DeleteUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ServiceGRPCServer).DeleteUser(ctx, req.(*DeleteUserReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ServiceGRPC_ServiceDesc is the grpc.ServiceDesc for ServiceGRPC service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -158,6 +222,14 @@ var ServiceGRPC_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateUser",
 			Handler:    _ServiceGRPC_CreateUser_Handler,
+		},
+		{
+			MethodName: "UpdateUser",
+			Handler:    _ServiceGRPC_UpdateUser_Handler,
+		},
+		{
+			MethodName: "DeleteUser",
+			Handler:    _ServiceGRPC_DeleteUser_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/Erickype/GoBonsaiAlbum/models"
 	mysql "github.com/Erickype/GoBonsaiAlbum/mysql/users"
+	"google.golang.org/genproto/googleapis/type/date"
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/runtime/protoimpl"
 	"log"
@@ -54,6 +55,55 @@ func (s *server) GetUsers(_ *GetUsersReq, stream ServiceGRPC_GetUsersServer) err
 	}
 
 	return nil
+}
+
+func (s *server) UpdateUser(_ context.Context, req *UpdateUserReq) (*UpdateUserRes, error) {
+
+	updateUserRes := &UpdateUserRes{
+		state:         protoimpl.MessageState{},
+		sizeCache:     0,
+		unknownFields: nil,
+		Updated:       false,
+		Error:         "",
+	}
+	user := models.User{
+		Id:           req.User.GetId(),
+		UserName:     req.User.GetUserName(),
+		UserLastname: req.User.GetUserLastname(),
+		UserNickname: req.User.GetUserNickname(),
+		CreatedAt:    date.Date{},
+	}
+
+	result, err := mysql.UpdateUser(&user)
+	if err != nil {
+		updateUserRes.Error = err.Error()
+		return updateUserRes, err
+	}
+
+	updateUserRes.Updated = result != 0
+
+	return updateUserRes, nil
+}
+
+func (s *server) DeleteUser(_ context.Context, req *DeleteUserReq) (*DeleteUserRes, error) {
+
+	deleteUserRes := &DeleteUserRes{
+		state:         protoimpl.MessageState{},
+		sizeCache:     0,
+		unknownFields: nil,
+		Deleted:       false,
+		Error:         "",
+	}
+
+	result, err := mysql.DeleteUser(req.Id)
+	if err != nil {
+		deleteUserRes.Error = err.Error()
+		return deleteUserRes, err
+	}
+
+	deleteUserRes.Deleted = result != 0
+
+	return deleteUserRes, nil
 }
 
 func (s *server) LoadSavedUsers(users []*models.User) {
