@@ -107,6 +107,7 @@ func (s *server) DeleteUser(_ context.Context, req *DeleteUserReq) (*DeleteUserR
 }
 
 func (s *server) LoadSavedUsers(users []*models.User) {
+	s.savedUsers = nil
 	for _, user := range users {
 		var savedUser = User{
 			state:         protoimpl.MessageState{},
