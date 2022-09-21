@@ -10,6 +10,7 @@ and talk to others passionate for bonsai.
 - Login auth using jwt
 - Scroll page
 - Groups and messaging
+- Microservices
 
 ## Already features added
 - Integration of redis and mysql
