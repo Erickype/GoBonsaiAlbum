@@ -14,3 +14,4 @@ and talk to others passionate for bonsai.
 
 ## Already features added
 - Integration of redis and mysql
+- Crud for user
